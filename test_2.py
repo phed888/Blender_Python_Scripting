@@ -12,47 +12,57 @@ os.system('cls' if os.name == 'nt' else 'clear')
 
 # Call all functions created below this function in this script here
 def main():
-    select(object_types = 'MESH')
+    select(types = ['LIGHT'])
 
 
 # Functions for this file
-def select(*object_names, object_types = None):
+def select(*object_names, **kwargs):
     """
     This function is designed to select multiple
     objects by their name and type.
 
+    Named objects can be listed first in the parenthesis (comma-separated)
+    after names, then list types as array preceded by 'types ='
+
     select() will deselect all objects
-    select(type='ALL') will select all objects
+    select(types='ALL') will select all objects
+    select(types=['MESH', 'EMPTY']) will select all the types in the list
+    select('Name') will select all objects by their name.
     """
+
+    types = kwargs.get('types')
+
     # Check if objects exist
     number_of_objects = len(all_objects())
     if number_of_objects == 0:
-        print('No objects')
+        print('No objects in scene')
     else:
-        # Select ALL
-        if object_types is None or object_types == []:
+
+        # Deselect ALL
+        if types is None or types == []:
             for obj in all_objects():
                 obj.select_set(False)
 
-        elif object_types == 'ALL':
+        # Select ALL
+        elif types == 'ALL':
             for obj in all_objects():
                 obj.select_set(True)
 
-        elif object_types == 'MESH':
+        # Select by type
+        else:
             for obj in all_objects():
-                if obj.type == 'MESH':
+                if obj.type in types:
                     obj.select_set(True)
                 else:
                     obj.select_set(False)
 
-        # Select ALL by type
         # Select objects by name
-        # Invert current selection
-        print(number_of_objects)
+        if object_names is not None:
+            for obj in object_names:
+                all_objects()[obj].select_set(True)
 
+    # Invert current selection
 
-    for item in object_names:
-        all_objects()[item].select_set(True)
 
 # Prevent conflicts with other add-ons
 if __name__ == '__main__':
